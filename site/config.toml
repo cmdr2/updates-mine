@@ -1,0 +1,10 @@
+baseURL = "http://example.org/"
+languageCode = "en-us"
+title = "My New Site"
+theme = "noteworthy"
+
+[Params]
+showReadMore = true
+
+tagsLabel = "Tags"
+hiddenTags = []

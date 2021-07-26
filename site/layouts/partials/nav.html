@@ -1,0 +1,20 @@
+<!-- Sidebar navigation -->
+<nav>
+  {{ partial "header.html" . }}
+  <div class="nav-menu">
+
+  <b>{{ .Site.Params.tagsLabel }}:</b>
+  <ul id="topics">
+  {{range $name, $taxonomy := .Site.Taxonomies.tags}}
+    {{ if not (in $.Site.Params.hiddenTags $name) }}
+      {{ with $.Site.GetPage (printf "/tags/%s" $name) }}
+            <li>
+              <a href={{ .RelPermalink }} title="All pages with tag <i>{{$name}}</i>">{{$name}}</a>
+            </li>
+      {{end}}
+    {{end}}
+  {{end}}
+  </ul>
+</div>
+{{ partial "footer.html" . }}
+</nav>
