@@ -1,9 +1,9 @@
 languageCode = "en-us"
-title = "My New Site"
+title = "~ of cmdr2"
 theme = "noteworthy"
 
 [Params]
 showReadMore = true
 
-tagsLabel = "Tags"
+tagsLabel = "Projects"
 hiddenTags = ["update"]
