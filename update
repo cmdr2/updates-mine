@@ -1,3 +1,181 @@
 #!/usr/bin/env python
 
+from pathlib import Path
+from uuid import uuid4 as uuid
+import dateparser
+import os
+import shutil
+
+# consts
+SITE_DIR = 'site'
+SRC_POSTS_DIR = 'posts'
+DEST_POSTS_DIR = 'site/content/update'
+
+class Post:
+	def __init__(self, id, title, date, tags, body):
+		self.id = uuid().hex if id == None else id
+		self.title = title
+		self.date = date
+		self.tags = tags
+		self.body = body
+
+		if len(self.tags) == 0:
+			self.tags.add('update')
+
+	def parse(lines):
+		ptr = 0
+
+		def validate_or_die():
+			if len(lines) < ptr + 3 or lines[ptr+1] != '\n':
+				raise ValueError('Invalid input: ', lines)
+
+		validate_or_die()
+
+		id = None
+		date = Post.parse_date(lines[0])
+		tags = set()
+		title = None
+		body = None
+
+		has_id = 'Id:' in lines[ptr+2]
+		if has_id:
+			id = lines[ptr+2]
+			id = id[len('Id:'):].strip()
+			ptr += 2
+
+		has_tags = '#' in lines[ptr+2]
+		if has_tags:
+			tags = Post.parse_tags(lines[ptr+2])
+			ptr += 2
+
+		validate_or_die()
+
+		has_title = 'Title:' in lines[ptr+2]
+		if has_title:
+			title = lines[ptr+2]
+			title = title[len('Title:'):].strip()
+			ptr += 2
+
+		validate_or_die()
+
+		body = ''.join(lines[ptr+2:])
+
+		return Post(id = id, date = date, tags = tags, title = title, body = body), id
+
+	def __str__(self):
+		template = '''id: %s
+title: %s
+date: %s
+tags: %s
+body: %s'''
+
+		return template % (self.id, self.title, self.date, self.tags, self.body)
+
+	def to_markdown(self):
+		post = '''---
+slug: %s
+date: %s
+tags: %s
+''' % (self.id, self.date, list(self.tags))
+
+		if self.title is not None:
+			post += 'title: %s\n' % self.title
+
+		post += '---\n\n'
+
+		post += self.body
+
+		return post
+
+	def parse_date(date_line):
+		return dateparser.parse(date_line)
+ 
+	def parse_tags(tags_line):
+		tags = set()
+		p = tags_line.split('#')
+		for tag in p:
+			t = tag.strip()
+			t = t.replace('\n', '')
+			if t == '':
+				continue
+
+			tags.add(t)
+
+		return tags
+
+	def parse_file(lines):
+		if lines is None or len(lines) < 1:
+			return []
+
+		posts = []
+		start_idx = 0
+
+		new_lines = []
+
+		def make_post(from_idx, to_idx):
+			post_lines = lines[from_idx:to_idx]
+			post, id = Post.parse(post_lines)
+			posts.append(post)
+
+			if id is None:
+				post_lines.insert(1, '\n')
+				post_lines.insert(2, 'Id: %s\n' % post.id)
+
+			new_lines.extend(post_lines)
+			if '\n' not in post_lines[-1]:
+				new_lines.append('\n\n')
+
+			new_lines.append('--\n')
+
+		for idx in range(1, len(lines)):
+			if lines[idx].strip() != '--':
+				continue
+
+			make_post(start_idx, idx)
+
+			start_idx = idx + 1
+
+		if start_idx < len(lines) - 1:
+			make_post(start_idx, len(lines))
+
+		return posts, new_lines
+
+
 print('Updating..')
+
+path = Path(SRC_POSTS_DIR)
+
+# read raw posts
+posts = []
+for p in path.rglob('*.txt'):
+	with open(p, 'r') as f:
+		lines = f.readlines()
+		f.close()
+
+		try:
+			posts_in_file, new_lines = Post.parse_file(lines)
+			posts.extend(posts_in_file)
+
+			with open(p, 'w') as f1:
+				f1.writelines(new_lines)
+		except ValueError as e:
+			raise ValueError(e.args, p)
+
+# delete old generated posts
+shutil.rmtree(DEST_POSTS_DIR, ignore_errors = True)
+os.makedirs(DEST_POSTS_DIR, exist_ok = True)
+
+# generate new posts
+for post in posts:
+	md = post.to_markdown()
+	dest_file_path = os.path.join(DEST_POSTS_DIR, post.id + '.md')
+	with open(dest_file_path, 'w') as f:
+		f.write(md)
+		print('wrote', dest_file_path)
+
+print('Writing..')
+
+# run hugo
+stream = os.popen('hugo -s %s -F' % SITE_DIR)
+output = stream.read()
+print(output)
