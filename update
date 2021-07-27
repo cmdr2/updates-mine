@@ -5,11 +5,22 @@ from uuid import uuid4 as uuid
 import dateparser
 import os
 import shutil
+import json
 
 # consts
 SITE_DIR = 'site'
 SRC_POSTS_DIR = 'posts'
 DEST_POSTS_DIR = 'site/content/update'
+PUBLIC_DIR = os.path.join(SITE_DIR, 'public')
+S3_BASE_DIR = None
+
+with open('config.json', 'r') as f:
+	c = json.load(f)
+	if c is None or 's3Path' not in c:
+		print('config.json is missing s3Path')
+		exit()
+
+	S3_BASE_DIR = c['s3Path']
 
 class Post:
 	def __init__(self, id, title, date, tags, body):
@@ -177,5 +188,10 @@ print('Writing..')
 
 # run hugo
 stream = os.popen('hugo -s %s -F' % SITE_DIR)
+output = stream.read()
+print(output)
+
+# sync s3
+stream = os.popen('aws s3 sync %s %s --acl public-read' % (PUBLIC_DIR, S3_BASE_DIR))
 output = stream.read()
 print(output)
