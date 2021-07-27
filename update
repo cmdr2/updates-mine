@@ -200,3 +200,16 @@ print(output)
 stream = os.popen('aws s3 sync %s %s --acl public-read' % (PUBLIC_DIR, S3_BASE_DIR))
 output = stream.read()
 print(output)
+
+# git push
+stream = os.popen('git add -A')
+output = stream.read()
+print(output)
+
+stream = os.popen('git commit -m "Update"')
+output = stream.read()
+print(output)
+
+stream = os.popen('git push')
+output = stream.read()
+print(output)
