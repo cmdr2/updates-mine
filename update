@@ -10,7 +10,7 @@ import json
 # consts
 SITE_DIR = 'site'
 SRC_POSTS_DIR = 'posts'
-DEST_POSTS_DIR = 'site/content/update'
+DEST_POSTS_DIR = 'site/content/p'
 PUBLIC_DIR = os.path.join(SITE_DIR, 'public')
 S3_BASE_DIR = None
 
@@ -37,7 +37,7 @@ class Post:
 		ptr = 0
 
 		def validate_or_die():
-			if len(lines) < ptr + 3 or lines[ptr+1] != '\n':
+			if ptr >= len(lines):
 				raise ValueError('Invalid input: ', lines)
 
 		validate_or_die()
@@ -48,28 +48,33 @@ class Post:
 		title = None
 		body = None
 
-		has_id = 'Id:' in lines[ptr+2]
-		if has_id:
-			id = lines[ptr+2]
-			id = id[len('Id:'):].strip()
-			ptr += 2
+		valid_headers = ['Id:', 'Title:', '#']
 
-		has_tags = '#' in lines[ptr+2]
-		if has_tags:
-			tags = Post.parse_tags(lines[ptr+2])
-			ptr += 2
+		ptr += 2
+
+		has_headers = False
+		for h in valid_headers:
+			if lines[ptr].startswith(h):
+				has_headers = True
+				break
+
+		if has_headers:
+			while ptr < len(lines):
+				line = lines[ptr]
+				ptr += 1
+
+				if line.startswith('Id:'):
+					id = line[len('Id:'):].strip()
+				elif line.startswith('Title:'):
+					title = line[len('Title:'):].strip()
+				elif line.startswith('#'):
+					tags = Post.parse_tags(line)
+				elif line.strip() == '':
+					break
 
 		validate_or_die()
 
-		has_title = 'Title:' in lines[ptr+2]
-		if has_title:
-			title = lines[ptr+2]
-			title = title[len('Title:'):].strip()
-			ptr += 2
-
-		validate_or_die()
-
-		body = ''.join(lines[ptr+2:])
+		body = ''.join(lines[ptr:])
 
 		return Post(id = id, date = date, tags = tags, title = title, body = body), id
 
