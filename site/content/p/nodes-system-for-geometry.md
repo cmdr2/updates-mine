@@ -32,6 +32,7 @@ One solution is to make edits destructive if they're done by directly manipulati
 This would probably mitigate the performance and exploding graph complexity problem, while aligning with the user's intent (hand-modifications to the mesh in the 3D editor aren't generally expected to be non-destructive, beyond the usual undo/redo).
 
 References:
+
 [1] Geometry Nodes in Blender - https://developer.blender.org/T74967
 
 [2] Maya DAG - https://help.autodesk.com/view/MAYAUL/2017/ENU/?guid=__files_DAG_Hierarchy_Overview_of_the_DAG_Hierarchy_htm
