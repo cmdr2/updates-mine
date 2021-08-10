@@ -32,6 +32,8 @@ This would probably mitigate the performance and exploding graph complexity prob
 
 References:
 [1] Geometry Nodes in Blender - https://developer.blender.org/T74967
+
 [2] Maya DAG - https://help.autodesk.com/view/MAYAUL/2017/ENU/?guid=__files_DAG_Hierarchy_Overview_of_the_DAG_Hierarchy_htm
+
 [3] Maya DAG - https://knowledge.autodesk.com/support/maya/learn-explore/caas/CloudHelp/cloudhelp/2022/ENU/Maya-Basics/files/GUID-5029CF89-D420-4236-A7CF-884610828B70-htm.html
 --
