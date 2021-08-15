@@ -60,7 +60,7 @@ While not strictly part of the syntax, the idea is to make programming productiv
 
 So a basic REPL or a basic IDE makes sense. Nothing fancy, just being able to type programs, run them, view the output, switch tabs and manage a rudimentary concept of "project". This would include the interpreter.
 
-Python's "batteries-included" approach makes sense. Additionally, being on a mobile, access to the device sensors and interacting with the device capabilities would be good. I should be able to hack up quick programs where I can use my location, accelerometer data, make some web calls etc. In-built libraries for those make sense.
+Python's "batteries-included" approach makes sense. Being on a mobile, access to the device sensors and interacting with the device capabilities would be good. I should be able to hack up quick programs where I can use my location, accelerometer data, make some web calls etc. In-built libraries for those make sense.
 
 Being able to run programs in the background makes sense, even though phone OSes (for good reason) make it really hard to run things reliably in the background. If I start a numpy task, and get a phone call that lasts for half an hour, my gradient descent should keep running in the background until it finishes. I'm adult enough to understand and manage my phone's battery :) and phone batteries have become really good now.
 
