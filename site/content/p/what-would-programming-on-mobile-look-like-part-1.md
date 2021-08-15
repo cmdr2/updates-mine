@@ -5,7 +5,7 @@ tags: ['programming-on-mobile']
 title: What would programming on a mobile look like? (Part 1)
 ---
 
-tl;dr: I haven't proposed a concrete solution yet, I'm starting this up as a hobby project, to explore more productive ways to program on mobile devices. This post is the background, question and initial ideas for the solution. Part 2 intends to describe one concrete experiment - trying to build a new text-based syntax that's productive to type on mobile keyboards. It's possible that's the wrong approach, maybe the answer is visual (e.g. nodes-based visual programming), but I'm starting with text for now (principle of least surprise).
+__tl;dr:__ I haven't proposed a concrete solution yet, I'm starting this up as a hobby project, to explore more productive ways to program on mobile devices. This post is the background, question and initial ideas for the solution. Part 2 intends to describe one concrete experiment - trying to build a new text-based syntax that's productive to type on mobile keyboards. It's possible that's the wrong approach, maybe the answer is visual (e.g. nodes-based visual programming), but I'm starting with text for now (principle of least surprise).
 
 ## Background (you can skip this) ##
 
@@ -76,3 +76,4 @@ Cheers,
 cmdr2
 
 dev@cmdr2.org
+
